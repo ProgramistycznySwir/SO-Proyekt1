@@ -2,7 +2,7 @@
 Projekt nr.1 z Systemów Operacyjnych<br>
 <br>
 <br>
-[Temat 2 - Demon synchronizujący dwa podkatalogi:](https://cez2.wi.pb.edu.pl/moodle/mod/page/view.php?id=5248)
+## [Temat 2 - Demon synchronizujący dwa podkatalogi:](https://cez2.wi.pb.edu.pl/moodle/mod/page/view.php?id=5248)
 <pre>
 Podstawowe <12pkt>:
 - Demon samowywołujący się co kilka minut,
@@ -24,8 +24,7 @@ Dodatkowe <22pkt>:
   - dla dużych używa mmap/write,
  - threshold pomiędzy oboma sposobami może być podawany jako argument
 </pre>
-<br>
-[Temat 3 - Demon(y) poszukujący plików:](https://cez2.wi.pb.edu.pl/moodle/mod/page/view.php?id=5249)
+## [Temat 3 - Demon(y) poszukujący plików:](https://cez2.wi.pb.edu.pl/moodle/mod/page/view.php?id=5249)
 <pre>
 Podstawowe <20pkt>:
 - Demon samowywołujący się co kilka sekund,
