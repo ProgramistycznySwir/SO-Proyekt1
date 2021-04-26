@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
     {
         //TODO: Insert daemon code here.
 
-        Log("Daemon iteration uwu")
+        Log("Daemon iteration uwu");
 
         sleep (4);
         // To make daemon stop after some time.
