@@ -68,7 +68,7 @@ static void InitializeDaemon()
 
 static void Log(char* message)
 {
-    syslog (LOG_NOTICE, message);
+    syslog (LOG_NOTICE, "%s", message);
 }
 
 char* sourceDirPath;
