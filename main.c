@@ -11,6 +11,8 @@
 #include <sys/stat.h>
 #include <syslog.h>
 
+#define DAEMON_NAME "My Directory Synchronizing Daemon :P";
+
 static void skeleton_daemon()
 {
     pid_t pid;
@@ -60,9 +62,10 @@ static void skeleton_daemon()
         close (x);
     }
 
-    /// Open the log file
-    openlog ("firstdaemon", LOG_PID, LOG_DAEMON);
+    /// Opens log file (first parameter is daemon's name)
+    openlog (DAEMON_NAME, LOG_PID, LOG_DAEMON);
 }
+
 int main()
 {
     skeleton_daemon();
