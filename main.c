@@ -13,7 +13,7 @@
 
 #define DAEMON_NAME "My Directory Synchronizing Daemon :P"
 
-static void skeleton_daemon()
+static void InitializeDaemon()
 {
     pid_t pid;
 
@@ -66,16 +66,29 @@ static void skeleton_daemon()
     openlog (DAEMON_NAME, LOG_PID, LOG_DAEMON);
 }
 
-int main()
+static void Log(char* message)
 {
-    skeleton_daemon();
+    syslog (LOG_NOTICE, message);
+}
 
-    while (1)
+char* sourceDirPath;
+char* targetDirPath;
+int main(int argc, char* argv[])
+{
+    InitializeDaemon();
+    int iterationsLifespan = 5;
+    Log("Daemon has started working");
+    // syslog (LOG_NOTICE, "Daemon has started working");
+    while (iterationsLifespan)
     {
         //TODO: Insert daemon code here.
-        syslog (LOG_NOTICE, "First daemon started.");
-        sleep (20);
-        break;
+
+        Log("Daemon iteration uwu")
+
+        sleep (4);
+        // To make daemon stop after some time.
+        iterationsLifespan--;
+        // break;
     }
 
     syslog (LOG_NOTICE, "First daemon terminated.");

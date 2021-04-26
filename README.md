@@ -15,7 +15,7 @@ Podstawowe <12pkt>:
 - Demon loguje każdą swoją aktywność (wybudzenie, zaśnięcie, kopiowanie itp.),
 + Demon musi koniecznie korzystać z wywołań linux'a, nie bibliotek C,
 + Broń boże nie można kopiować całego katalogu, pliki trzeba kopiować indywidualnie,
-+ Program musi być samodzielny, nie może delegować swojego działania do wywołać shell'a,
++ Program musi być samodzielny, nie może delegować swojego działania do wywołań shell'a,
 
 Dodatkowe <22pkt>:
 -<10pkt> Synchronizacja podkatalogów (tryb jest przełączany poprzez flagę -R).
