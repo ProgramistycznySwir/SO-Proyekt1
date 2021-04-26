@@ -11,7 +11,7 @@
 #include <sys/stat.h>
 #include <syslog.h>
 
-#define DAEMON_NAME "My Directory Synchronizing Daemon :P";
+#define DAEMON_NAME "My Directory Synchronizing Daemon :P"
 
 static void skeleton_daemon()
 {
