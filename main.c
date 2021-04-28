@@ -193,7 +193,7 @@ void Daemon_SignalHandler(int signalCode)
     }
 }
 
-#define COPYING_BUFFER_SIZE 65 536
+#define COPYING_BUFFER_SIZE 65536
 int CopyFile(const char* fileName_source, const char* fileName_target)
 {
     // syslog(LOG_NOTICE, "Copying %s to %s...", fileName_source, fileName_target);
@@ -221,8 +221,8 @@ int CopyFile(const char* fileName_source, const char* fileName_target)
     unsigned char* buffer =
         (unsigned char*) malloc(sizeof(unsigned char) * COPYING_BUFFER_SIZE);
 
-    while ( read(in, buffer, bufferSize) )
-        write(out, buffer, bufferSize);
+    while ( read(in, buffer, COPYING_BUFFER_SIZE) )
+        write(out, buffer, COPYING_BUFFER_SIZE);
 
     close(in);
     close(out);
@@ -323,7 +323,7 @@ void Daemon_SynchronizeDirectories(char* sourceDirPath, char* targetDirPath)
     while ((currentEntry = readdir(targetDirPath)) != NULL )
     {
         // If readdir() entry is a DIRectory.
-        if (recursion_flag
+        if (flag_recursion
             && currentEntry->d_type == DT_DIR
             && strcmp(currentEntry->d_name, ".") != 0
             && strcmp(currentEntry->d_name, "..") != 0 )
@@ -344,7 +344,7 @@ void Daemon_SynchronizeDirectories(char* sourceDirPath, char* targetDirPath)
         }
 
         // If readdir() entry is a REGular file.
-        if (dest_ent->d_type == DT_REG)
+        if (currentEntry->d_type == DT_REG)
         {
             char sourceFilePath[1024], targetFilePath[1024];
 
@@ -363,7 +363,7 @@ void Daemon_SynchronizeDirectories(char* sourceDirPath, char* targetDirPath)
 
     }
 
-    closedir(targetDirPath);
+    closedir(targetDir);
 }
 
 int main(int argc, char* argv[])
@@ -376,8 +376,8 @@ int main(int argc, char* argv[])
     }
     //STINK: I'm not sure about if this way of allocation is propper, may need
     //        to change to malloc().
-    sourceDirPath = char[sizeof(argv[1])];
-    targetDirPath = char[sizeof(argv[2])];
+    char sourceDirPath[sizeof(argv[1])];
+    char targetDirPath[sizeof(argv[2])];
 
     strcpy(sourceDirPath, argv[1]);
     strcpy(targetDirPath, argv[2]);
@@ -412,7 +412,7 @@ int main(int argc, char* argv[])
                 break;
             case 'R': // (R)ecursion
                 //TODO: Implement.
-                recursion_flag=1;
+                flag_recursion = 1;
                 break;
             case 'T': // (T)hreshold - optarg
                 //TODO: Implement.
@@ -442,7 +442,7 @@ int main(int argc, char* argv[])
         SimpleLog("Daemon iteration uwu");
 
         sleep (sleepTimeInSeconds);
-        if(sigusr1 == 0)
+        if(flag_sigusr1 == 0)
             SimpleLog("Natural awakening of daemon!");
         // To make daemon stop after some time.
         iterationsLifespan--;
