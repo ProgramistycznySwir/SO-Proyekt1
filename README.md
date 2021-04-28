@@ -6,6 +6,7 @@ Projekt nr.1 z Systemów Operacyjnych<br>
 <pre>
 Podstawowe <12pkt>:
 - Demon samowywołujący się co kilka minut,
+  - Czas samowybudzania można zespecyfikować po podaniu flagi (-t)
 - Kopiowanie do folderu docelowego plików:
   - których w nim nie ma a są w źródłowym,
   - z późniejszą datą niż odpowiednik źródłowego w folderze docelowym.
