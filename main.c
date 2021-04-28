@@ -8,8 +8,8 @@
 #include <dirent.h>
 #include <string.h>
 
+#include <fcntl.h>
 // #include <ctype.h>
-// #include <fcntl.h>
 
 // Tags description:
 //TODO - thing to do.
@@ -29,8 +29,8 @@ int sleepTimeInSeconds = 4;
 char flag_recursion = 0;
 char flag_sigusr1 = 0;
 
-char* sourceDirPath;
-char* targetDirPath;
+// char* sourceDirPath;
+// char* targetDirPath;
 
 #pragma endregion
 
@@ -62,7 +62,7 @@ char FileExistsAt(char* filePath)
     return 1;
 }
 
-/// return: File1.Age - File2.Age
+/// return: File1.ModificationTime - File2.ModificationTime
 char CompareModificationTimeOfFiles(char* filePath1, char* filePath2)
 {
     struct stat file1_stat, file2_stat;
@@ -71,75 +71,51 @@ char CompareModificationTimeOfFiles(char* filePath1, char* filePath2)
     return file1_stat.st_mtime - file2_stat.st_mtime;
 }
 
+/// Taken from: https://stackoverflow.com/questions/2256945/removing-a-non-empty-directory-programmatically-in-c-or-c/42978529
 char RemoveDirectoryAt(const char *path)
 {
     DIR *d = opendir(path);
     size_t path_len = strlen(path);
-    char r = -1;
-    if (d)      //Jeżeli otwieranie katalogu zakończy się powodzeniem
+    int r = -1;
+
+    if (d)
     {
         struct dirent *p;
-        r = 0;
 
-        while (!r && (p=readdir(d)))    //Czytanie po katalogu
+        r = 0;
+        while (!r && (p=readdir(d)))
         {
             int r2 = -1;
             char *buf;
             size_t len;
 
-            if (!strcmp(p->d_name, ".") || !strcmp(p->d_name, ".."))    //Pomijamy dowiązania symboliczne
-            {
+            /* Skip the names "." and ".." as we don't want to recurse on them. */
+            if (!strcmp(p->d_name, ".") || !strcmp(p->d_name, ".."))
                 continue;
-            }
 
             len = path_len + strlen(p->d_name) + 2;
             buf = malloc(len);
 
-            if (buf)    //Jeżeli alokowanie pamięci zakończy się powodzeniem
+            if (buf)
             {
                 struct stat statbuf;
 
-                snprintf(buf, len, "%s/%s", path, p->d_name);   //Stworzenie ścieżki do odczytanego pliku
-
-                if (!stat(buf, &statbuf))
-                {
-                    if (S_ISDIR(statbuf.st_mode))       //Jeśli odczytany plik jest katalogiem
-                    {
-                        r2 = RemoveDirectoryAt(buf);
-
-                        time_t now;
-                        struct tm * timeinfo;
-                        time ( &now );
-                        timeinfo = localtime ( &now );
-
-                        syslog(LOG_NOTICE, "%s: usunięto katalog %s", asctime(timeinfo), buf);
-                    }
+                snprintf(buf, len, "%s/%s", path, p->d_name);
+                if (!stat(buf, &statbuf)) {
+                    if (S_ISDIR(statbuf.st_mode))
+                        r2 = remove_directory(buf);
                     else
-                    {
-                        r2 = unlink(buf);       //Usunięcie pojedynczego pliku
-
-                        time_t now;
-                        struct tm * timeinfo;
-                        time ( &now );
-                        timeinfo = localtime ( &now );
-
-                        syslog(LOG_NOTICE, "%s: usunięto plik %s", asctime(timeinfo), buf);
-                    }
+                        r2 = unlink(buf);
                 }
-
-                free(buf);      //Zwolnienie pamięci zaalokowanej przez bufor
+                free(buf);
             }
-
             r = r2;
         }
-
         closedir(d);
     }
 
-    if (!r)     //Jeżeli usuwanie plików z katalogu zakończy się powodzeniem (funkcja remove_directory zwróci 0)
-    {
-        r = rmdir(path);    //Usunięcie pustego katalogu
-    }
+    if (!r)
+        r = rmdir(path);
 
     return r;
 }
@@ -149,7 +125,9 @@ char RemoveDirectoryAt(const char *path)
 
 #pragma region >>> Initialization Functions <<<
 
-static void InitializeDaemon()
+void Daemon_SignalHandler(int signalCode);
+
+void InitializeDaemon()
 {
     // Fork off the parent process
     /// Note: fork makes 2 processes to spark out after this line, one - child-
@@ -201,7 +179,7 @@ static void InitializeDaemon()
 #pragma endregion
 
 
-static void Daemon_SignalHandler(int signalCode)
+void Daemon_SignalHandler(int signalCode)
 {
     switch (signalCode)
     {
@@ -341,8 +319,10 @@ void Daemon_SynchronizeDirectories(char* sourceDirPath, char* targetDirPath)
     }
     closedir(sourceDir);
 
+    /// Sweepback:
     while ((currentEntry = readdir(targetDirPath)) != NULL )
     {
+        // If readdir() entry is a DIRectory.
         if (recursion_flag
             && currentEntry->d_type == DT_DIR
             && strcmp(currentEntry->d_name, ".") != 0
@@ -363,6 +343,7 @@ void Daemon_SynchronizeDirectories(char* sourceDirPath, char* targetDirPath)
             }
         }
 
+        // If readdir() entry is a REGular file.
         if (dest_ent->d_type == DT_REG)
         {
             char sourceFilePath[1024], targetFilePath[1024];
