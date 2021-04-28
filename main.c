@@ -40,7 +40,7 @@ char flag_sigusr1 = 0;
 void SimpleLog(char* message)
     { syslog (LOG_NOTICE, "%s", message); }
 
-char DirectoryExistsAt(char* directoryPath)
+char DoesDirectoryExistsAt(char* directoryPath)
 {
     DIR* directoryToCheck = opendir(directoryPath);
 
@@ -51,7 +51,7 @@ char DirectoryExistsAt(char* directoryPath)
     return 1;
 }
 
-char FileExistsAt(char* filePath)
+char DoesFileExistsAt(char* filePath)
 {
     int fileToCheck = open(filePath, O_WRONLY);
 
@@ -103,7 +103,7 @@ char RemoveDirectoryAt(const char *path)
                 snprintf(buf, len, "%s/%s", path, p->d_name);
                 if (!stat(buf, &statbuf)) {
                     if (S_ISDIR(statbuf.st_mode))
-                        r2 = remove_directory(buf);
+                        r2 = RemoveDirectoryAt(buf);
                     else
                         r2 = unlink(buf);
                 }
@@ -235,7 +235,7 @@ int CopyFile(const char* fileName_source, const char* fileName_target)
 
 void Daemon_SynchronizeDirectories(char* sourceDirPath, char* targetDirPath)
 {
-    // if (!DirectoryExistsAt(sourceDirPath) || !DirectoryExistsAt(targetDirPath))
+    // if (!DoesDirectoryExistsAt(sourceDirPath) || !DoesDirectoryExistsAt(targetDirPath))
     // {
     //     Log("Incorrect directory path!");
     //     return;
@@ -260,7 +260,7 @@ void Daemon_SynchronizeDirectories(char* sourceDirPath, char* targetDirPath)
 
     //STINK: Not sure about this way of handling null equation, this is not
     //        normal lang with bools and stuff, here 1 is fine condition output.
-    while (currentEntry = readdir(sourceDir) != NULL)
+    while ((currentEntry = readdir(sourceDir)) != NULL)
     {
         // If readdir() entry is a DIRectory.
         if(flag_recursion
@@ -276,7 +276,7 @@ void Daemon_SynchronizeDirectories(char* sourceDirPath, char* targetDirPath)
                 targetDirPath, currentEntry->d_name);
 
             // Handle if target directory don't exist yet.
-            if(!dir_exist(nestedTargetDirPath))
+            if(!DoesDirectoryExistsAt(nestedTargetDirPath))
             {
                 mkdir(nestedTargetDirPath, 0x0777);
                 syslog(LOG_NOTICE, "Daemon created new directory at %s",
@@ -296,7 +296,7 @@ void Daemon_SynchronizeDirectories(char* sourceDirPath, char* targetDirPath)
             snprintf(targetFilePath, 1024,"%s/%s",
                 targetDirPath, currentEntry->d_name);
 
-            if (!FileExistsAt(targetFilePath))
+            if (!DoesFileExistsAt(targetFilePath))
             {
                 //NOTE:
                 if(CopyFile(sourceFilePath, targetFilePath))
@@ -320,7 +320,7 @@ void Daemon_SynchronizeDirectories(char* sourceDirPath, char* targetDirPath)
     closedir(sourceDir);
 
     /// Sweepback:
-    while ((currentEntry = readdir(targetDirPath)) != NULL )
+    while ((currentEntry = readdir(targetDir)) != NULL )
     {
         // If readdir() entry is a DIRectory.
         if (flag_recursion
@@ -335,7 +335,7 @@ void Daemon_SynchronizeDirectories(char* sourceDirPath, char* targetDirPath)
             snprintf(nestedTargetDirPath, 1024,"%s/%s",
                 targetDirPath, currentEntry->d_name);
 
-            if (!DirectoryExistsAt(nestedSourceDirPath))
+            if (!DoesDirectoryExistsAt(nestedSourceDirPath))
             {
                 RemoveDirectoryAt(nestedTargetDirPath);
                 syslog(LOG_NOTICE, "Daemon deleted directory at %s",
@@ -353,7 +353,7 @@ void Daemon_SynchronizeDirectories(char* sourceDirPath, char* targetDirPath)
             snprintf(targetFilePath, 1024,"%s/%s",
                 targetDirPath, currentEntry->d_name);
 
-            if (!FileExistsAt(sourceFilePath))
+            if (!DoesFileExistsAt(sourceFilePath))
             {
                 unlink(targetFilePath);
                 syslog(LOG_NOTICE, "Daemon deleted file at %s",
@@ -383,12 +383,12 @@ int main(int argc, char* argv[])
     strcpy(targetDirPath, argv[2]);
 
     /// Handle if directories even exist:
-    if (!DirectoryExistsAt(sourceDirPath))
+    if (!DoesDirectoryExistsAt(sourceDirPath))
     {
         printf("Source directory doesn't exist at %s", sourceDirPath);
         return EXIT_FAILURE;
     }
-    if (!DirectoryExistsAt(targetDirPath))
+    if (!DoesDirectoryExistsAt(targetDirPath))
     {
         printf("Source directory doesn't exist at %s", targetDirPath);
         return EXIT_FAILURE;
