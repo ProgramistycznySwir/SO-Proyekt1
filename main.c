@@ -411,11 +411,11 @@ int main(int argc, char* argv[])
     // printf("sizeof: %ld\n", sizeof(argv[1]));
     //STINK: I'm not sure about if this way of allocation is propper, may need
     //        to change to malloc().
-    char sourceDirPath[strlen(argv[1]) + 1];
-    char targetDirPath[strlen(argv[2]) + 1];
+    char sourceDirPath[strlen(argv[optind + 1]) + 1];
+    char targetDirPath[strlen(argv[optind + 2]) + 1];
 
-    strcpy(sourceDirPath, argv[1]);
-    strcpy(targetDirPath, argv[2]);
+    strcpy(sourceDirPath, argv[optind + 1]);
+    strcpy(targetDirPath, argv[optind + 2]);
 
     /// Handle if directories even exist:
     if (!DoesDirectoryExistsAt(sourceDirPath))
@@ -432,7 +432,7 @@ int main(int argc, char* argv[])
 
     ///FUNC: Handle optional arguments:
     int c;
-    while (c = getopt(argc, argv, "RtT:") != -1)
+    while (c = getopt(argc, argv, ":RtT:") != -1)
     {
         switch(c)
         {
@@ -464,7 +464,11 @@ int main(int argc, char* argv[])
     }
 
     // Confirming daemon configuration.
-    printf("Daemon configuration: R= %d, t= %d, T= %d\n", flag_recursion, sleepTimeInSeconds, mmapThreshold);
+    printf("Daemon configuration:\n");
+    printf("  Source path: %s\n", sourceDirPath);
+    printf("  Target path: %s\n", targetDirPath);
+    printf("  R= %d, t= %d, T= %d\n", flag_recursion, sleepTimeInSeconds, mmapThreshold);
+    printf("\n");
 
     // Start daemon.
     InitializeDaemon(); // DEAMONIZED DOWN FROM HERE ---------------------------
