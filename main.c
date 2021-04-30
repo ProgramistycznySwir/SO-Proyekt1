@@ -399,36 +399,11 @@ void Daemon_SynchronizeDirectories(char* sourceDirPath, char* targetDirPath)
 
 int main(int argc, char* argv[])
 {
-    ///FUNC: Handle parameters:
     if (argc < 2)
     {
         printf("Error: Programm takes at least 2 arguments!\n");
         exit(EXIT_FAILURE);
     }
-    //TODO_CLEAN: Those comments:
-    // printf("argc: %d\n", argc);
-    // printf("strlen: %ld\n", strlen(argv[1]));
-    // printf("sizeof: %ld\n", sizeof(argv[1]));
-    //STINK: I'm not sure about if this way of allocation is propper, may need
-    //        to change to malloc().
-    char sourceDirPath[strlen(argv[optind + 1]) + 1];
-    char targetDirPath[strlen(argv[optind + 2]) + 1];
-
-    strcpy(sourceDirPath, argv[optind + 1]);
-    strcpy(targetDirPath, argv[optind + 2]);
-
-    /// Handle if directories even exist:
-    if (!DoesDirectoryExistsAt(sourceDirPath))
-    {
-        printf("Source directory doesn't exist at %s", sourceDirPath);
-        return EXIT_FAILURE;
-    }
-    if (!DoesDirectoryExistsAt(targetDirPath))
-    {
-        printf("Source directory doesn't exist at %s", targetDirPath);
-        return EXIT_FAILURE;
-    }
-
 
     ///FUNC: Handle optional arguments:
     int c;
@@ -462,6 +437,34 @@ int main(int argc, char* argv[])
 
         }
     }
+
+    ///FUNC: Handle parameters:
+    //TODO_CLEAN: Those comments:
+    // printf("argc: %d\n", argc);
+    // printf("strlen: %ld\n", strlen(argv[1]));
+    // printf("sizeof: %ld\n", sizeof(argv[1]));
+    //STINK: I'm not sure about if this way of allocation is propper, may need
+    //        to change to malloc().
+    char sourceDirPath[strlen(argv[optind + 1]) + 1];
+    char targetDirPath[strlen(argv[optind + 2]) + 1];
+
+    strcpy(sourceDirPath, argv[optind + 1]);
+    strcpy(targetDirPath, argv[optind + 2]);
+
+    /// Handle if directories even exist:
+    if (!DoesDirectoryExistsAt(sourceDirPath))
+    {
+        printf("Source directory doesn't exist at %s", sourceDirPath);
+        return EXIT_FAILURE;
+    }
+    if (!DoesDirectoryExistsAt(targetDirPath))
+    {
+        printf("Source directory doesn't exist at %s", targetDirPath);
+        return EXIT_FAILURE;
+    }
+
+
+
 
     // Confirming daemon configuration.
     printf("Daemon configuration:\n");
