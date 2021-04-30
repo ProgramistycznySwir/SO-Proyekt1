@@ -3,13 +3,13 @@
 #include <signal.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
-#include <syslog.h>
-#include <dirent.h>
+#include <unistd.h> // for optionals
+#include <syslog.h> // for logging
+#include <dirent.h> // for dirent
 #include <string.h>
 
 #include <fcntl.h>
-#include <utime.h>
+#include <utime.h> // for updating time
 // #include <ctype.h>
 
 // Tags description:
@@ -408,7 +408,7 @@ int main(int argc, char* argv[])
     printf("At least starts?\n");
     ///FUNC: Handle optional arguments:
     int c;
-    while (c = getopt(argc, argv, "Rt:T:") != -1)
+    while ((c = getopt(argc, argv, "Rt:T:")) != -1)
     {
         printf("Looping at least... %d\n", c);
         switch(c)
