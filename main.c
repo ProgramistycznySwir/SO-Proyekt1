@@ -307,7 +307,8 @@ void Daemon_SynchronizeDirectories(char* sourceDirPath, char* targetDirPath)
             // Handle if target directory don't exist yet.
             if(!DoesDirectoryExistsAt(nestedTargetDirPath))
             {
-                mkdir(nestedTargetDirPath, 0x0777);
+                mkdir(nestedTargetDirPath, 00000);
+                EqualizePrivilages(nestedSourceDirPath, nestedTargetDirPath);
                 syslog(LOG_NOTICE, "Daemon created new directory at %s",
                     nestedTargetDirPath);
             }
@@ -405,12 +406,10 @@ int main(int argc, char* argv[])
         exit(EXIT_FAILURE);
     }
 
-    printf("At least starts?\n");
     ///FUNC: Handle optional arguments:
     int c;
     while ((c = getopt(argc, argv, "Rt:T:")) != -1)
     {
-        printf("Looping at least... %d\n", c);
         switch(c)
         {
             case 't': // (t)ime - optarg
@@ -439,7 +438,6 @@ int main(int argc, char* argv[])
 
         }
     }
-    printf("And gets past this while\n");
 
     ///FUNC: Handle parameters:
     //TODO_CLEAN: Those comments:
