@@ -407,7 +407,7 @@ int main(int argc, char* argv[])
 
     ///FUNC: Handle optional arguments:
     int c;
-    while (c = getopt(argc, argv, ":RtT:") != -1)
+    while (c = getopt(argc, argv, "Rt:T:") != -1)
     {
         switch(c)
         {
