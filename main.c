@@ -27,6 +27,7 @@
 
 //TODO_CLEAN: Set sleepTimeInSeconds (below) to 300.
 int sleepTimeInSeconds = 4;
+int mmapThreshold = 65536;
 char flag_recursion = 0;
 char flag_sigusr1 = 0;
 
@@ -450,11 +451,14 @@ int main(int argc, char* argv[])
                 break;
             case 'T': // (T)hreshold - optarg
                 //TODO: Implement.
+                mmapThreshold = optarg;
                 break;
 
         }
     }
 
+    // Confirming daemon configuration.
+    printf("Daemon configuration: R= %d, t= %d, T= %d\n", flag_recursion, sleepTimeInSeconds, mmapThreshold)
 
     // Start daemon.
     InitializeDaemon(); // DEAMONIZED DOWN FROM HERE ---------------------------
@@ -475,7 +479,7 @@ int main(int argc, char* argv[])
         //TODO_CLEAN: Delete below line.
         SimpleLog("Daemon iteration uwu");
 
-        sleep (sleepTimeInSeconds);
+        sleep(sleepTimeInSeconds);
         if(flag_sigusr1 == 0)
             SimpleLog("Natural awakening of daemon!");
         // To make daemon stop after some time.
