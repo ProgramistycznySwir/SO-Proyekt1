@@ -25,23 +25,11 @@ Dodatkowe <22pkt>:
   - dla dużych używa mmap/write,
  - threshold pomiędzy oboma sposobami może być podawany jako argument
 </pre>
-## [Temat 3 - Demon(y) poszukujący plików:](https://cez2.wi.pb.edu.pl/moodle/mod/page/view.php?id=5249)
-<pre>
-Podstawowe <20pkt>:
-- Demon samowywołujący się co kilka sekund,
-- Czas samowybudzania można zespecyfikować w parametrach,
-- Demon reaguje na sygnały systemowe:
-  - SIGUSR1: if("demon śpi") od razu wybudza demona,
-- Demon przeszukuje system plików w poszukiwaniu plików z zawierających hasła zawarte w parametrach,
-+ Demon pomija katalogi i pliki do których nie ma dostępu,
-- Demon loguje wyniki swoich poszukiwań do logów systemowych,
-- Demon pod wpływem parametru -v szczegółowo loguje swoje poczynania,
 
-Dodatkowe <14pkt>:
--<6pkt> reagowanie na sygnały systemowe:
-  - SIGUSR1: od razu resetuje poszukiwanie,
-  - SIGUSR2: przerywa obecnie trwające przeszukiwanie i usypia demona,
--<8pkt> współbieżność (nie wiem czy ktokolwiek czuje się pewnie w współbieżności).
-</pre>
-
-
+## Treść zadania:
+[12p.] Program który otrzymuje co najmniej dwa argumenty: ścieżkę źródłową oraz ścieżkę docelową . Jeżeli któraś ze ścieżek nie jest katalogiem program powraca natychmiast z komunikatem błędu. W przeciwnym wypadku staje się demonem. Demon wykonuje następujące czynności: śpi przez pięć minut (czas spania można zmieniać przy pomocy dodatkowego opcjonalnego argumentu), po czym po obudzeniu się porównuje katalog źródłowy z katalogiem docelowym. Pozycje które nie są zwykłymi plikami są ignorowane (np. katalogi i dowiązania symboliczne). Jeżeli demon (a) napotka na  nowy plik w katalogu źródłowym, i tego pliku brak w katalogu docelowym lub (b) plik w katalogu źrodłowym ma późniejszą datę ostatniej modyfikacji demon wykonuje kopię pliku z  katalogu źródłowego do katalogu docelowego - ustawiając w katalogu docelowym datę modyfikacji tak aby przy kolejnym obudzeniu nie trzeba było wykonać kopii (chyba  ze plik w katalogu źródłowym zostanie ponownie zmieniony). Jeżeli zaś odnajdzie plik w katalogu docelowym, którego nie ma w katalogu źródłowym to usuwa ten plik z katalogu docelowego. Możliwe jest również natychmiastowe obudzenie się demona poprzez wysłanie mu sygnału SIGUSR1. Wyczerpująca informacja o każdej akcji typu uśpienie/obudzenie się demona (naturalne lub w wyniku sygnału), wykonanie kopii lub usunięcie pliku jest przesłana do logu systemowego. Informacja ta powinna zawierać aktualną datę.<br>
+<br>
+a) [10p.]  Dodatkowa opcja -R pozwalająca na rekurencyjną synchronizację katalogów (teraz pozycje będące katalogami nie są ignorowane). W szczególności jeżeli demon  stwierdzi w katalogu docelowym  podkatalog którego brak w katalogu źródłowym powinien usunąć go wraz z zawartością.<br>
+b) [12p.] W zależności  od rozmiaru plików dla małych plików wykonywane jest kopiowanie przy pomocy read/write a w przypadku dużych przy pomocy mmap/write (plik źródłowy) zostaje zamapowany w całości w pamięci. Próg dzielący pliki małe od dużych  może być przekazywany jako opcjonalny argument.<br>
+<br>
+Uwagi: (a) Wszelkie operacje na plikach należy wykonywać przy pomocy API Linuksa a nie standardowej biblioteki języka C (b)  kopiowanie za każdym obudzeniem całego drzewa katalogów zostanie potraktowane jako poważny błąd (c) podobnie jak przerzucenie części zadań na shell systemowy (funkcja system).<br>
