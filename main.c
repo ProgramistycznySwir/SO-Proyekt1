@@ -9,6 +9,7 @@
 #include <string.h>
 
 #include <fcntl.h>
+#include <utime.h>
 // #include <ctype.h>
 
 // Tags description:
@@ -86,14 +87,12 @@ void EqualizeModificationTime(char* donorPath, char* receiverPath)
     newTime.modtime = donor_stat.st_mtime;
     // Update time.
     utime(receiverPath, &newTime);
-
-    return 0;
 }
 void EqualizePrivilages(char* donorPath, char* receiverPath)
 {
     struct stat donor_stat;
     stat(donorPath, &donor_stat);
-    chmod(receiverPath, statRes.st_mode);
+    chmod(receiverPath, donor_stat.st_mode);
 }
 
 /// Taken from: https://stackoverflow.com/questions/2256945/removing-a-non-empty-directory-programmatically-in-c-or-c/42978529
@@ -219,7 +218,7 @@ void Daemon_SignalHandler(int signalCode)
 }
 
 #define COPYING_BUFFER_SIZE 65536
-int CopyFile(const char* fileName_source, const char* fileName_target)
+int CopyFile(char* fileName_source, char* fileName_target)
 {
     // syslog(LOG_NOTICE, "Copying %s to %s...", fileName_source, fileName_target);
     int in = open(fileName_source, O_RDONLY);
