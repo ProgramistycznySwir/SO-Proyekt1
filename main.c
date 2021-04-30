@@ -374,13 +374,14 @@ int main(int argc, char* argv[])
         printf("Error: Programm takes at least 2 arguments!\n");
         exit(EXIT_FAILURE);
     }
-    printf("argc: %d\n", argc);
-    printf("strlen: %ld\n", strlen(argv[1]));
-    printf("sizeof: %ld\n", sizeof(argv[1]));
+    //TODO_CLEAN: Those comments:
+    // printf("argc: %d\n", argc);
+    // printf("strlen: %ld\n", strlen(argv[1]));
+    // printf("sizeof: %ld\n", sizeof(argv[1]));
     //STINK: I'm not sure about if this way of allocation is propper, may need
     //        to change to malloc().
-    char sourceDirPath[sizeof(argv[1]) + 1];
-    char targetDirPath[sizeof(argv[2]) + 1];
+    char sourceDirPath[strlen(argv[1]) + 1];
+    char targetDirPath[strlen(argv[2]) + 1];
 
     strcpy(sourceDirPath, argv[1]);
     strcpy(targetDirPath, argv[2]);
