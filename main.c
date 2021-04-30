@@ -410,7 +410,7 @@ int main(int argc, char* argv[])
     int c;
     while (c = getopt(argc, argv, "Rt:T:") != -1)
     {
-        printf("Looping at least...\n");
+        printf("Looping at least... %c\n", c);
         switch(c)
         {
             case 't': // (t)ime - optarg
