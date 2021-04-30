@@ -71,6 +71,25 @@ char CompareModificationTimeOfFiles(char* filePath1, char* filePath2)
     return file1_stat.st_mtime - file2_stat.st_mtime;
 }
 
+//TODO_CLEAN: Cleanup commented lines.
+/// Literally just sets receiver.ModificationTime = donor.ModificationTime
+void EqualizeModificationTime(char* donorPath, char* receiverPath)
+{
+    struct stat donor_stat, receiver_stat;
+    // time_t modificationTime;
+    struct utimbuf newTime;
+
+    stat(donorPath, &donor_stat);
+    // modificationTime = donor_stat.st_mtime;
+
+    // new_times.actime = donor_stat.st_atime;
+    newTime.modtime = donor_stat.st_mtime;
+    // Update time.
+    utime(receiverPath, &newTime);
+
+    return 0;
+}
+
 /// Taken from: https://stackoverflow.com/questions/2256945/removing-a-non-empty-directory-programmatically-in-c-or-c/42978529
 char RemoveDirectoryAt(const char *path)
 {
@@ -306,7 +325,7 @@ void Daemon_SynchronizeDirectories(char* sourceDirPath, char* targetDirPath)
                     syslog(LOG_NOTICE, "Daemon created file %s", targetFilePath);
 
             }
-            else if(CompareModificationTimeOfFiles(sourceFilePath, targetFilePath) <= 0)
+            else if(CompareModificationTimeOfFiles(sourceFilePath, targetFilePath) < 0)
             {
                 if(CopyFile(sourceFilePath, targetFilePath))
                     syslog(LOG_NOTICE, "Daemon failed to update file %s",
