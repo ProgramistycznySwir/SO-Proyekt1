@@ -437,8 +437,8 @@ int main(int argc, char* argv[])
         switch(c)
         {
             case 't': // (t)ime - optarg
-                sleepTimeInSeconds=atoi(optarg);
-                if(sleepTimeInSeconds == 0)
+                sleepTimeInSeconds = atoi(optarg);
+                if(sleepTimeInSeconds <= 0)
                 {
                     printf("Impropper sleep time provided (%d s) overrided to default (300s)"
                     ,sleepTimeInSeconds);
@@ -451,7 +451,13 @@ int main(int argc, char* argv[])
                 break;
             case 'T': // (T)hreshold - optarg
                 //TODO: Implement.
-                mmapThreshold = optarg;
+                mmapThreshold = atoi(optarg);
+                if(mmapThreshold <= 0)
+                {
+                    printf("Impropper mmapThreshold provided (%d b) overrided to default (65536b)"
+                    ,mmapThreshold);
+                    mmapThreshold = 65536;
+                }
                 break;
 
         }
