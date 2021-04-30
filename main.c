@@ -375,8 +375,8 @@ int main(int argc, char* argv[])
         exit(EXIT_FAILURE);
     }
     printf("argc: %d\n", argc);
-    printf("1: %d\n", sizeof(argv[1]));
-    printf("2: %d\n", sizeof(argv[2]));
+    printf("strlen: %ld\n", strlen(argv[1]));
+    printf("sizeof: %ld\n", sizeof(argv[1]));
     //STINK: I'm not sure about if this way of allocation is propper, may need
     //        to change to malloc().
     char sourceDirPath[sizeof(argv[1]) + 1];
