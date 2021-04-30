@@ -75,7 +75,7 @@ char CompareModificationTimeOfFiles(char* filePath1, char* filePath2)
 /// Literally just sets receiver.ModificationTime = donor.ModificationTime
 void EqualizeModificationTime(char* donorPath, char* receiverPath)
 {
-    struct stat donor_stat, receiver_stat;
+    struct stat donor_stat;
     // time_t modificationTime;
     struct utimbuf newTime;
 
@@ -88,6 +88,12 @@ void EqualizeModificationTime(char* donorPath, char* receiverPath)
     utime(receiverPath, &newTime);
 
     return 0;
+}
+void EqualizePrivilages(char* donorPath, char* receiverPath)
+{
+    struct stat donor_stat;
+    stat(donorPath, &donor_stat);
+    chmod(receiverPath, statRes.st_mode);
 }
 
 /// Taken from: https://stackoverflow.com/questions/2256945/removing-a-non-empty-directory-programmatically-in-c-or-c/42978529
@@ -248,6 +254,10 @@ int CopyFile(const char* fileName_source, const char* fileName_target)
 
     free(buffer);
 
+    // Setting privilages and modification time:
+    EqualizePrivilages(fileName_source, fileName_target);
+    EqualizeModificationTime(fileName_source, fileName_target);
+
     // syslog(LOG_NOTICE, "Successfully copied file.");
     return 0;
 }
@@ -384,6 +394,8 @@ void Daemon_SynchronizeDirectories(char* sourceDirPath, char* targetDirPath)
 
     closedir(targetDir);
 }
+
+
 
 int main(int argc, char* argv[])
 {
