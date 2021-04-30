@@ -458,7 +458,7 @@ int main(int argc, char* argv[])
     }
 
     // Confirming daemon configuration.
-    printf("Daemon configuration: R= %d, t= %d, T= %d\n", flag_recursion, sleepTimeInSeconds, mmapThreshold)
+    printf("Daemon configuration: R= %d, t= %d, T= %d\n", flag_recursion, sleepTimeInSeconds, mmapThreshold);
 
     // Start daemon.
     InitializeDaemon(); // DEAMONIZED DOWN FROM HERE ---------------------------
