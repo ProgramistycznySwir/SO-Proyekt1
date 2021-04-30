@@ -448,11 +448,11 @@ int main(int argc, char* argv[])
     // printf("sizeof: %ld\n", sizeof(argv[1]));
     //STINK: I'm not sure about if this way of allocation is propper, may need
     //        to change to malloc().
-    char sourceDirPath[strlen(argv[optind + 1]) + 1];
-    char targetDirPath[strlen(argv[optind + 2]) + 1];
+    char sourceDirPath[strlen(argv[optind + 0]) + 1];
+    char targetDirPath[strlen(argv[optind + 1]) + 1];
 
-    strcpy(sourceDirPath, argv[optind + 1]);
-    strcpy(targetDirPath, argv[optind + 2]);
+    strcpy(sourceDirPath, argv[optind + 0]);
+    strcpy(targetDirPath, argv[optind + 1]);
 
     /// Handle if directories even exist:
     if (!DoesDirectoryExistsAt(sourceDirPath))
