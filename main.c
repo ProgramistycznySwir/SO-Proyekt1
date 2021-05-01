@@ -28,8 +28,7 @@
 #pragma region >>> Global Variables <<<
 
 #define sleepTimeInSeconds_DEFAULT 300
-//TODO_CLEAN: Set sleepTimeInSeconds (below) to sleepTimeInSeconds_DEFAULT.
-int sleepTimeInSeconds = 4;
+int sleepTimeInSeconds = sleepTimeInSeconds_DEFAULT;
 #define mmapThreshold_DEFAULT 65536
 int mmapThreshold = mmapThreshold_DEFAULT;
 char flag_recursion = 0;
