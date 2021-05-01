@@ -9,4 +9,4 @@ $(TARGET): main.c UtilityFunctions.c
 	$(CC) $(CFLAGS) -o $(TARGET) main.c UtilityFunctions.c
 
 clean:
-	rm -f $(TARGET) *.o
+	rm -f *.o
