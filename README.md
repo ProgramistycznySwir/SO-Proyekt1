@@ -1,7 +1,7 @@
 # SO-Proyekt1 - Daemon synchronizing two directories
 Project nr.1 in Operating Systems (Systemów Operacyjnych)<br>
 Polish version of manual you can find here: [Manual.txt](/Manual.txt)<br>
-<br>
+
 #### Disclaimer:
 For educational purpouses only, please don't use this daemon in 
 real-life scenario, I can't take responsibility for if it explodes or something :/
