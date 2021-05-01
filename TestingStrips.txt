@@ -1,0 +1,8 @@
+Source:
+"/home/komputar/Testing Daemon/Source"
+Target:
+"/home/komputar/Testing Daemon/Target"
+
+./Daemon "/home/komputar/Testing Daemon/Source" "/home/komputar/Testing Daemon/Target"
+./Daemon -t 6 -R "/home/komputar/Testing Daemon/Source" "/home/komputar/Testing Daemon/Target"
+./Daemon -t 6 -R -T 1 "/home/komputar/Testing Daemon/Source" "/home/komputar/Testing Daemon/Target"
