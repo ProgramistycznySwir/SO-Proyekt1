@@ -8,8 +8,8 @@
 
 #include "UtilityFunctions.h"
 
-static int CopyUsingReadWrite(char* fileName_source, char* fileName_target, int bufferSize);
-static int CopyUsingMMapWrite(char* fileName_source, char* fileName_target, int fileSize);
+static int CopyUsingReadWrite(char* fileName_source, char* fileName_target, long int bufferSize);
+static int CopyUsingMMapWrite(char* fileName_source, char* fileName_target, long int fileSize);
 
 // #define COPYING_BUFFER_SIZE 65536
 int CopyFile(char* fileName_source, char* fileName_target, int mmapThreshold)
@@ -35,8 +35,8 @@ int CopyFile(char* fileName_source, char* fileName_target, int mmapThreshold)
     return EXIT_SUCCESS;
 }
 
-#define MAX_COPYING_BUFFER_SIZE 65536;
-static int CopyUsingReadWrite(char* fileName_source, char* fileName_target, int bufferSize)
+#define MAX_COPYING_BUFFER_SIZE 65536
+static int CopyUsingReadWrite(char* fileName_source, char* fileName_target, long int bufferSize)
 {
     // To prevent creation of LHO.
     if(bufferSize > MAX_COPYING_BUFFER_SIZE)
@@ -82,7 +82,7 @@ static int CopyUsingReadWrite(char* fileName_source, char* fileName_target, int 
 // }
 
 // Mostly sourced from: https://developpaper.com/using-mmap-to-copy-large-files-single-process-and-multi-process/
-static int CopyUsingMMapWrite(char* fileName_source, char* fileName_target, fileSize)
+static int CopyUsingMMapWrite(char* fileName_source, char* fileName_target, long int fileSize)
 {
     //Open target file
     //Calculate the size (in bytes) of the source file
