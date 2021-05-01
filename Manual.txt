@@ -1,0 +1,19 @@
+1. Najpierw przejdź do katalogu w którym umieściłeś Daemon'a.
+    Możesz nawigować za pomocą:
+    ls # do wyświetlania zawartości obecnego katalogu.
+    cd [nazwa katalogu] # do przechodzenia do chcianego katalogu.
+
+2. Tworzysz 2 katalogii i jeden (źródłowy) zapełniasz katalogami i plikami.
+    Możesz do tego użyć:
+    mkdir [nazwa katalogu] # do tworzenia katalogów.
+    touch [pełna nazwa pliku] # do tworzenia plików (pamiętaj by zawrzeć też po kropce rozszerzenie).
+    echo "[tekst]" > [plik] # do szybkiego zapisywania tekstu do plików.
+    nano [plik] # do uruchomienia pliku w pełnym edytorze tekstu.
+
+3. Uruchamiasz demona wpisując:
+./Daemon -t 6 -R -T 1 [pełna ścieżka do źródłowego katalogu] [pełna ścieżka do docelowego katalogu]
+
+4. Sprawdzasz logi:
+    Możesz to zrobić poprzez:
+    tail /var/log/syslog # wypisuje 10 ostatnich logów.
+    cat /var/log/syslog # wypisuje wszystkie logi.

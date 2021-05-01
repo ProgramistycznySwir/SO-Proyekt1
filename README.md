@@ -1,6 +1,9 @@
 # SO-Proyekt1
 Projekt nr.1 z Systemów Operacyjnych<br>
 <br>
+For educational purpouses only, please don't use this daemon in real-life scenario,
+I can't take responsibility for if it explodes or something :/
+<br>
 <br>
 ## [Temat 2 - Demon synchronizujący dwa podkatalogi:](https://cez2.wi.pb.edu.pl/moodle/mod/page/view.php?id=5248)
 <pre>
