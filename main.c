@@ -33,6 +33,8 @@ int sleepTimeInSeconds = sleepTimeInSeconds_DEFAULT;
 int mmapThreshold = mmapThreshold_DEFAULT;
 char flag_recursion = 0;
 char flag_sigusr1 = 0;
+// Setted if daemon should run only 5 times.
+char flag_demo = 0;
 
 #pragma endregion
 
@@ -41,7 +43,7 @@ char flag_sigusr1 = 0;
 void ParseOptionalArguments(int argc, char* argv[])
 {
     int c;
-    while ((c = getopt(argc, argv, "Rt:T:")) != -1)
+    while ((c = getopt(argc, argv, "dRt:T:")) != -1)
     {
         switch(c)
         {
@@ -65,6 +67,9 @@ void ParseOptionalArguments(int argc, char* argv[])
                 ,mmapThreshold);
                 mmapThreshold = mmapThreshold_DEFAULT;
             }
+            break;
+        case 'd':
+            flag_demo = 1;
             break;
         }
     }
@@ -361,7 +366,8 @@ int main(int argc, char* argv[])
             SimpleLog("Natural awakening of daemon!");
 
         //TODO_CLEAN: To make daemon stop after some time, delete later.
-        iterationsLifespan--;
+        if(flag_demo)
+            iterationsLifespan--;
     }
 
     SimpleLog("Daemon terminated...");
