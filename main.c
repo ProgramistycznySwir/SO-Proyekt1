@@ -39,7 +39,7 @@ char flag_sigusr1 = 0;
 #pragma endregion
 
 
-void ParseOptionalArguments()
+void ParseOptionalArguments(int argc, char* argv[])
 {
     int c;
     while ((c = getopt(argc, argv, "Rt:T:")) != -1)
@@ -281,7 +281,7 @@ int main(int argc, char* argv[])
     }
 
     // Handle optional arguments.
-    ParseOptionalArguments();
+    ParseOptionalArguments(argc, argv);
 
     ///FUNC: Handle parameters:
     //TODO_CLEAN: Those comments:
