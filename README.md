@@ -1,10 +1,13 @@
-# SO-Proyekt1
-Projekt nr.1 z Systemów Operacyjnych<br>
+# SO-Proyekt1 - Daemon synchronizing two directories
+Project nr.1 in Operating Systems (Systemów Operacyjnych)<br><br>
+Polish version of manual you can find here: [Manual.txt](/Manual.txt)<br><br>
 <br>
-For educational purpouses only, please don't use this daemon in real-life scenario,
-I can't take responsibility for if it explodes or something :/
+#### Disclaimer:
+For educational purpouses only, please don't use this daemon in 
+real-life scenario, I can't take responsibility for if it explodes or something :/
 <br>
 <br>
+(I'm not providing below text in any other language than polish...)
 ## [Temat 2 - Demon synchronizujący dwa podkatalogi:](https://cez2.wi.pb.edu.pl/moodle/mod/page/view.php?id=5248)
 <pre>
 Podstawowe <12pkt>:
