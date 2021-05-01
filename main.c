@@ -3,7 +3,7 @@
 #include <signal.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h> // for optionals
+#include <unistd.h> // for unix functions
 #include <syslog.h> // for logging
 #include <dirent.h> // for dirent
 #include <string.h>

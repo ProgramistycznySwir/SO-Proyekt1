@@ -1,8 +1,11 @@
 #include "Copy.h"
 
+#include <stdlib.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <unistd.h>
 
+#include "UtilityFunctions.h"
 
 #define COPYING_BUFFER_SIZE 65536
 int CopyFile(char* fileName_source, char* fileName_target)
