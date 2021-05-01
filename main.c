@@ -264,6 +264,7 @@ int CopyFile(char* fileName_source, char* fileName_target)
 
 void Daemon_SynchronizeDirectories(char* sourceDirPath, char* targetDirPath)
 {
+    syslog(LOG_NOTICE, "Attempt at synchronizing directories: S: %s, T: %s", sourceDirPath, targetDirPath);
     // if (!DoesDirectoryExistsAt(sourceDirPath) || !DoesDirectoryExistsAt(targetDirPath))
     // {
     //     Log("Incorrect directory path!");
@@ -274,13 +275,13 @@ void Daemon_SynchronizeDirectories(char* sourceDirPath, char* targetDirPath)
     DIR* targetDir = opendir(targetDirPath);
     if (sourceDir == NULL)
     {
-        syslog (LOG_NOTICE, "Deamon couldn't find source directory at %s",
+        syslog (LOG_NOTICE, "Daemon couldn't find source directory at %s",
             sourceDirPath);
         return;
     }
     if (sourceDir == NULL)
     {
-        syslog (LOG_NOTICE, "Deamon couldn't find target directory at %s",
+        syslog (LOG_NOTICE, "Daemon couldn't find target directory at %s",
             sourceDirPath);
         return;
     }
