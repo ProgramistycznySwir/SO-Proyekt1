@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <stdlib.h>
+
 #include <unistd.h> // for optionals
 #include <syslog.h> // for logging
 #include <dirent.h> // for dirent
