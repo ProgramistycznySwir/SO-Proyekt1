@@ -46,18 +46,14 @@ char CompareModificationTimeOfFiles(char* filePath1, char* filePath2)
     return file1_stat.st_mtime - file2_stat.st_mtime;
 }
 
-//TODO_CLEAN: Cleanup commented lines.
 /// Literally just sets receiver.ModificationTime = donor.ModificationTime
 void EqualizeModificationTime(char* donorPath, char* receiverPath)
 {
     struct stat donor_stat;
-    // time_t modificationTime;
     struct utimbuf newTime;
 
     stat(donorPath, &donor_stat);
-    // modificationTime = donor_stat.st_mtime;
 
-    // new_times.actime = donor_stat.st_atime;
     newTime.modtime = donor_stat.st_mtime;
     // Update time.
     utime(receiverPath, &newTime);

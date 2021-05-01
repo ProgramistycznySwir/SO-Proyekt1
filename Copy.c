@@ -80,12 +80,6 @@ static int CopyUsingReadWrite(char* fileName_source, char* fileName_target, long
     return EXIT_SUCCESS;
 }
 
-// unsigned long get_file_byte_num(const char * filename)
-// {
-//     FILE *fp = fopen(filename, "r");
-//     fseek(fp, 0, SEEK_END);
-//     return ftell(fp);
-// }
 
 // Mostly sourced from: https://developpaper.com/using-mmap-to-copy-large-files-single-process-and-multi-process/
 static int CopyUsingMMapWrite(char* fileName_source, char* fileName_target, long int fileSize)

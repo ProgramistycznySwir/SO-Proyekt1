@@ -61,7 +61,6 @@ void ParseOptionalArguments(int argc, char* argv[])
                 flag_recursion = 1;
                 break;
             case 'T': // (T)hreshold - optarg
-                //TODO: Implement.
                 mmapThreshold = atoi(optarg);
                 if(mmapThreshold <= 0)
                 {
@@ -80,7 +79,7 @@ void Daemon_SignalHandler(int signalCode)
     {
     case SIGUSR1:
         //TODO: insert propper signal handling.
-        syslog(LOG_NOTICE, "Daemon awakens due to SIGUSR1 stimulant ~w~");
+        syslog(LOG_NOTICE, "Daemon awakens due to SIGUSR1 signal.");
         break;
 
     default:
@@ -139,15 +138,11 @@ void InitializeDaemon()
 
 void Daemon_SynchronizeDirectories(char* sourceDirPath, char* targetDirPath)
 {
-    syslog(LOG_NOTICE, "Attempt at synchronizing directories: S: %s, T: %s", sourceDirPath, targetDirPath);
-    // if (!DoesDirectoryExistsAt(sourceDirPath) || !DoesDirectoryExistsAt(targetDirPath))
-    // {
-    //     Log("Incorrect directory path!");
-    //     return;
-    // }
+    // syslog(LOG_NOTICE, "Attempt at synchronizing directories: S: %s, T: %s", sourceDirPath, targetDirPath);
 
     DIR* sourceDir = opendir(sourceDirPath);
     DIR* targetDir = opendir(targetDirPath);
+    // Error handling:
     if (sourceDir == NULL)
     {
         syslog (LOG_NOTICE, "Daemon couldn't find source directory at %s",
@@ -224,7 +219,6 @@ void Daemon_SynchronizeDirectories(char* sourceDirPath, char* targetDirPath)
 
             if (!DoesFileExistsAt(targetFilePath))
             {
-                //NOTE:
                 if(CopyFile(sourceFilePath, targetFilePath, mmapThreshold))
                     syslog(LOG_NOTICE, "Daemon failed to create file %s",
                         targetFilePath);
@@ -318,8 +312,6 @@ int main(int argc, char* argv[])
     ParseOptionalArguments(argc, argv);
 
     ///FUNC: Handle parameters:
-    //STINK: I'm not sure about if this way of allocation is propper, may need
-    //        to change to malloc().
     char sourceDirPath[strlen(argv[optind + 0]) + 1];
     char targetDirPath[strlen(argv[optind + 1]) + 1];
 
@@ -372,7 +364,7 @@ int main(int argc, char* argv[])
         iterationsLifespan--;
     }
 
-    SimpleLog("Daemon terminated qwq");
+    SimpleLog("Daemon terminated...");
     closelog();
 
     return EXIT_SUCCESS;
