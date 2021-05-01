@@ -5,8 +5,8 @@ TARGET = Daemon
 
 # all: $(TARGET)
 
-Daemon: main.c UtilityFunctions.c
-	$(CC) $(CFLAGS) -o Daemon main.c UtilityFunctions.c
+$(TARGET): main.c UtilityFunctions.c
+	$(CC) $(CFLAGS) -o $(TARGET) main.c UtilityFunctions.c
 
 clean:
 	rm -f *.o

@@ -5,6 +5,7 @@
 #include <syslog.h> // for logging
 #include <dirent.h> // for dirent
 #include <string.h>
+#include <sys/stat.h>
 
 #include <fcntl.h>
 #include <utime.h> // for updating time
