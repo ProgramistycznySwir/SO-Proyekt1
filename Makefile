@@ -5,8 +5,14 @@ TARGET = Daemon
 
 # all: $(TARGET)
 
-$(TARGET): main.c UtilityFunctions.c
-	$(CC) $(CFLAGS) -o $(TARGET) main.c UtilityFunctions.c
+$(TARGET): main.o UtilityFunctions.o
+	$(CC) $(CFLAGS) -o $(TARGET) main.o UtilityFunctions.o
+
+main.o: main.c
+	$(CC) -c main.c
+
+UtilityFunctions.o: UtilityFunctions.c UtilityFunctions.h
+	$(CC) -c UtilityFunctions.c
 
 clean:
-	rm -f *.o
+	rm *.o

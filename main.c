@@ -11,6 +11,7 @@
 #include <fcntl.h>
 #include <utime.h> // for updating time
 // #include <ctype.h>
+#include "UtilityFunctions.h"
 
 // Tags description:
 //TODO - thing to do.
