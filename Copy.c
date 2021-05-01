@@ -4,11 +4,13 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
-#include <unistd.h>
+#include <unistd.h> // for linux functions
 
-#include <string.h>
+#include <string.h> // for memcpy
 #include <stdio.h>
-#include <sys/mman.h>
+#include <sys/mman.h> // for mmap
+
+#include <syslog.h> // for logging
 
 #include "UtilityFunctions.h"
 
@@ -101,7 +103,7 @@ static int CopyUsingMMapWrite(char* fileName_source, char* fileName_target, long
     char *mem =(char*) mmap(NULL, fileSize, PROT_WRITE|PROT_READ, MAP_SHARED, fd, 0);
     if (mem == MAP_FAILED)
     {
-        syslog (LOG_NOTICE, "Map failed for file %s", fileName_source);
+        syslog(LOG_NOTICE, "Map failed for file %s", fileName_source);
         close(fd);
         close(tfd);
         return EXIT_FAILURE;
@@ -109,7 +111,7 @@ static int CopyUsingMMapWrite(char* fileName_source, char* fileName_target, long
     char *tmem =(char*) mmap(NULL, fileSize, PROT_WRITE|PROT_READ, MAP_SHARED, tfd, 0);
     if (tmem == MAP_FAILED)
     {
-        syslog (LOG_NOTICE, "Map failed for file %s", fileName_target);
+        syslog(LOG_NOTICE, "Map failed for file %s", fileName_target);
         close(fd);
         close(tfd);
         return EXIT_FAILURE;
