@@ -6,6 +6,13 @@ Polish version of manual you can find here: [Manual.txt](/Manual.txt)<br>
 For educational purpouses only, please don't use this daemon in 
 real-life scenario, I can't take responsibility for if it explodes or something :/
 <br>
+### List of parameters:
+- 1st parameter - full path to source directory,
+- 2nd parameter - full path to target directory,
+- d - (d)emo mode (daemon will run only 5 times) [bool],
+- R - (R)ecursive [bool],
+- t - (t)ime of sleep [int],
+- T - (T)hreshold above which mmap() will be used for copying files instead of read() [int].
 <br>
 (I'm not providing below text in any other language than polish...)
 ## [Temat 2 - Demon synchronizujący dwa podkatalogi:](https://cez2.wi.pb.edu.pl/moodle/mod/page/view.php?id=5248)
