@@ -16,4 +16,4 @@ void EqualizePrivilages(char* donorPath, char* receiverPath);
 /// Taken from: https://stackoverflow.com/questions/2256945/removing-a-non-empty-directory-programmatically-in-c-or-c/42978529
 char RemoveDirectoryAt(const char *path);
 
-#endif UTILITYFUNCTIONS_H
+#endif // UTILITYFUNCTIONS_H
