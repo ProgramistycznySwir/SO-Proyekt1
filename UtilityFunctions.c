@@ -12,9 +12,11 @@
 #include <fcntl.h>
 #include <utime.h> // for updating time
 
+/// For outputing to syslog simple messages.
 void SimpleLog(char* message)
     { syslog (LOG_NOTICE, "%s", message); }
 
+/// return: if there's directory at provided directoryPath.
 char DoesDirectoryExistsAt(char* directoryPath)
 {
     DIR* directoryToCheck = opendir(directoryPath);
@@ -25,7 +27,7 @@ char DoesDirectoryExistsAt(char* directoryPath)
     closedir(directoryToCheck);
     return 1;
 }
-
+/// return: if there's file at provided filePath.
 char DoesFileExistsAt(char* filePath)
 {
     int fileToCheck = open(filePath, O_WRONLY);
@@ -46,7 +48,7 @@ char CompareModificationTimeOfFiles(char* filePath1, char* filePath2)
     return file1_stat.st_mtime - file2_stat.st_mtime;
 }
 
-/// Literally just sets receiver.ModificationTime = donor.ModificationTime
+/// Sets receiver's (2nd param) modification time to equals of donor's.
 void EqualizeModificationTime(char* donorPath, char* receiverPath)
 {
     struct stat donor_stat;
@@ -58,6 +60,7 @@ void EqualizeModificationTime(char* donorPath, char* receiverPath)
     // Update time.
     utime(receiverPath, &newTime);
 }
+/// Sets receiver's (2nd param) privilages to equals of donor's.
 void EqualizePrivilages(char* donorPath, char* receiverPath)
 {
     struct stat donor_stat;
@@ -66,6 +69,7 @@ void EqualizePrivilages(char* donorPath, char* receiverPath)
 }
 
 /// Taken from: https://stackoverflow.com/questions/2256945/removing-a-non-empty-directory-programmatically-in-c-or-c/42978529
+/// Removes directory at provided path.
 char RemoveDirectoryAt(const char *path)
 {
     DIR *d = opendir(path);

@@ -17,7 +17,7 @@
 static int CopyUsingReadWrite(char* fileName_source, char* fileName_target, long int bufferSize);
 static int CopyUsingMMapWrite(char* fileName_source, char* fileName_target, long int fileSize);
 
-// #define COPYING_BUFFER_SIZE 65536
+/// Copies file from one filepath (source) to another (target).
 int CopyFile(char* fileName_source, char* fileName_target, int mmapThreshold)
 {
     struct stat fileStat;
@@ -40,6 +40,7 @@ int CopyFile(char* fileName_source, char* fileName_target, int mmapThreshold)
     // syslog(LOG_NOTICE, "Successfully copied file.");
     return EXIT_SUCCESS;
 }
+
 
 #define MAX_COPYING_BUFFER_SIZE 65536
 static int CopyUsingReadWrite(char* fileName_source, char* fileName_target, long int bufferSize)
@@ -79,7 +80,6 @@ static int CopyUsingReadWrite(char* fileName_source, char* fileName_target, long
     free(buffer);
     return EXIT_SUCCESS;
 }
-
 
 // Mostly sourced from: https://developpaper.com/using-mmap-to-copy-large-files-single-process-and-multi-process/
 static int CopyUsingMMapWrite(char* fileName_source, char* fileName_target, long int fileSize)

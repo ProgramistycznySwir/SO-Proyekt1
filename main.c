@@ -35,12 +35,10 @@ int mmapThreshold = mmapThreshold_DEFAULT;
 char flag_recursion = 0;
 char flag_sigusr1 = 0;
 
-// char* sourceDirPath;
-// char* targetDirPath;
-
 #pragma endregion
 
 
+/// Parses optional command line arguments.
 void ParseOptionalArguments(int argc, char* argv[])
 {
     int c;
@@ -48,27 +46,27 @@ void ParseOptionalArguments(int argc, char* argv[])
     {
         switch(c)
         {
-            case 't': // (t)ime - optarg
-                sleepTimeInSeconds = atoi(optarg);
-                if(sleepTimeInSeconds <= 0)
-                {
-                    printf("Impropper sleep time provided (%d s) overrided to default (300s)"
-                    ,sleepTimeInSeconds);
-                    sleepTimeInSeconds = sleepTimeInSeconds_DEFAULT;
-                }
-                break;
-            case 'R': // (R)ecursion
-                flag_recursion = 1;
-                break;
-            case 'T': // (T)hreshold - optarg
-                mmapThreshold = atoi(optarg);
-                if(mmapThreshold <= 0)
-                {
-                    printf("Impropper mmapThreshold provided (%d b) overrided to default (65536b)"
-                    ,mmapThreshold);
-                    mmapThreshold = mmapThreshold_DEFAULT;
-                }
-                break;
+        case 't': // (t)ime - optarg
+            sleepTimeInSeconds = atoi(optarg);
+            if(sleepTimeInSeconds <= 0)
+            {
+                printf("Impropper sleep time provided (%d s) overrided to default (300s)"
+                ,sleepTimeInSeconds);
+                sleepTimeInSeconds = sleepTimeInSeconds_DEFAULT;
+            }
+            break;
+        case 'R': // (R)ecursion
+            flag_recursion = 1;
+            break;
+        case 'T': // (T)hreshold - optarg
+            mmapThreshold = atoi(optarg);
+            if(mmapThreshold <= 0)
+            {
+                printf("Impropper mmapThreshold provided (%d b) overrided to default (65536b)"
+                ,mmapThreshold);
+                mmapThreshold = mmapThreshold_DEFAULT;
+            }
+            break;
         }
     }
 }
@@ -87,6 +85,7 @@ void Daemon_SignalHandler(int signalCode)
     }
 }
 
+/// Function for forking this process to make it a daemon.
 void InitializeDaemon()
 {
     // Fork off the parent process
@@ -136,6 +135,7 @@ void InitializeDaemon()
     openlog (DAEMON_NAME, LOG_PID, LOG_DAEMON);
 }
 
+/// Recursive function for synchronizing two directories.
 void Daemon_SynchronizeDirectories(char* sourceDirPath, char* targetDirPath)
 {
     // syslog(LOG_NOTICE, "Attempt at synchronizing directories: S: %s, T: %s", sourceDirPath, targetDirPath);
@@ -347,6 +347,7 @@ int main(int argc, char* argv[])
     // Changing working directory to root.
     chdir("/");
 
+    //TODO_CLEAN: To make daemon stop after some time, delete later.
     int iterationsLifespan = 5;
     SimpleLog("Daemon has started working");
 
@@ -360,7 +361,7 @@ int main(int argc, char* argv[])
         if(flag_sigusr1 == 0)
             SimpleLog("Natural awakening of daemon!");
 
-        //TODO_CLEAN: To make daemon stop after some time.
+        //TODO_CLEAN: To make daemon stop after some time, delete later.
         iterationsLifespan--;
     }
 
