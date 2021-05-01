@@ -27,9 +27,11 @@
 
 #pragma region >>> Global Variables <<<
 
-//TODO_CLEAN: Set sleepTimeInSeconds (below) to 300.
+#define sleepTimeInSeconds_DEFAULT 300
+//TODO_CLEAN: Set sleepTimeInSeconds (below) to sleepTimeInSeconds_DEFAULT.
 int sleepTimeInSeconds = 4;
-int mmapThreshold = 65536;
+#define mmapThreshold_DEFAULT 65536
+int mmapThreshold = mmapThreshold_DEFAULT;
 char flag_recursion = 0;
 char flag_sigusr1 = 0;
 
@@ -52,11 +54,10 @@ void ParseOptionalArguments(int argc, char* argv[])
                 {
                     printf("Impropper sleep time provided (%d s) overrided to default (300s)"
                     ,sleepTimeInSeconds);
-                    sleepTimeInSeconds = 300;
+                    sleepTimeInSeconds = sleepTimeInSeconds_DEFAULT;
                 }
                 break;
             case 'R': // (R)ecursion
-                //TODO: Implement.
                 flag_recursion = 1;
                 break;
             case 'T': // (T)hreshold - optarg
@@ -66,7 +67,7 @@ void ParseOptionalArguments(int argc, char* argv[])
                 {
                     printf("Impropper mmapThreshold provided (%d b) overrided to default (65536b)"
                     ,mmapThreshold);
-                    mmapThreshold = 65536;
+                    mmapThreshold = mmapThreshold_DEFAULT;
                 }
                 break;
         }
@@ -162,27 +163,39 @@ void Daemon_SynchronizeDirectories(char* sourceDirPath, char* targetDirPath)
 
     struct dirent* currentEntry;
 
-    //STINK: Not sure about this way of handling null equation, this is not
-    //        normal lang with bools and stuff, here 1 is fine condition output.
     while ((currentEntry = readdir(sourceDir)) != NULL)
     {
-        // If readdir() entry is a DIRectory.
+        /// If readdir() entry is a DIRectory.
         if(flag_recursion
             && currentEntry->d_type == DT_DIR
             && strcmp(currentEntry->d_name, ".") != 0
             && strcmp(currentEntry->d_name, "..") != 0 )
         {
-            char nestedSourceDirPath[1024], nestedTargetDirPath[1024];
-
-            snprintf(nestedSourceDirPath, 1024,"%s/%s",
+            int nestedSourceDirPath_stringLenght_ =
+                strlen(sourceDirPath) + strlen(currentEntry->d_name) + 2;
+            char nestedSourceDirPath[nestedSourceDirPath_stringLenght_];
+            snprintf(nestedSourceDirPath, nestedSourceDirPath_stringLenght_,
+                "%s/%s",
                 sourceDirPath, currentEntry->d_name);
-            snprintf(nestedTargetDirPath, 1024,"%s/%s",
+
+            int nestedTargetDirPath_stringLenght_ =
+                strlen(targetDirPath) + strlen(currentEntry->d_name) + 2;
+            char nestedTargetDirPath[nestedTargetDirPath_stringLenght_];
+            snprintf(nestedTargetDirPath, nestedTargetDirPath_stringLenght_,
+                "%s/%s",
                 targetDirPath, currentEntry->d_name);
+
 
             // Handle if target directory don't exist yet.
             if(!DoesDirectoryExistsAt(nestedTargetDirPath))
             {
-                mkdir(nestedTargetDirPath, 00000);
+                if(mkdir(nestedTargetDirPath, 00000))
+                {
+                    syslog(LOG_NOTICE, "Daemon failed to create new directory at %s",
+                        nestedTargetDirPath);
+                    // Skip this dirEntry.
+                    continue;
+                }
                 EqualizePrivilages(nestedSourceDirPath, nestedTargetDirPath);
                 syslog(LOG_NOTICE, "Daemon created new directory at %s",
                     nestedTargetDirPath);
@@ -191,20 +204,28 @@ void Daemon_SynchronizeDirectories(char* sourceDirPath, char* targetDirPath)
             Daemon_SynchronizeDirectories(nestedSourceDirPath, nestedTargetDirPath);
         }
 
-        // If readdir() entry is a REGular file.
+        /// If readdir() entry is a REGular file.
         if(currentEntry->d_type == DT_REG)
         {
-            char sourceFilePath[1024], targetFilePath[1024];
-
-            snprintf(sourceFilePath, 1024,"%s/%s",
+            int sourceFilePath_stringLenght_ =
+                strlen(sourceDirPath) + strlen(currentEntry->d_name) + 2;
+            char sourceFilePath[sourceFilePath_stringLenght_];
+            snprintf(sourceFilePath, sourceFilePath_stringLenght_,
+                "%s/%s",
                 sourceDirPath, currentEntry->d_name);
-            snprintf(targetFilePath, 1024,"%s/%s",
+
+            int targetFilePath_stringLenght_ =
+                strlen(targetDirPath) + strlen(currentEntry->d_name) + 2;
+            char targetFilePath[targetFilePath_stringLenght_];
+            snprintf(targetFilePath, targetFilePath_stringLenght_,
+                "%s/%s",
                 targetDirPath, currentEntry->d_name);
+
 
             if (!DoesFileExistsAt(targetFilePath))
             {
                 //NOTE:
-                if(CopyFile(sourceFilePath, targetFilePath))
+                if(CopyFile(sourceFilePath, targetFilePath, mmapThreshold))
                     syslog(LOG_NOTICE, "Daemon failed to create file %s",
                         targetFilePath);
                 else
@@ -213,7 +234,7 @@ void Daemon_SynchronizeDirectories(char* sourceDirPath, char* targetDirPath)
             }
             else if(CompareModificationTimeOfFiles(sourceFilePath, targetFilePath) < 0)
             {
-                if(CopyFile(sourceFilePath, targetFilePath))
+                if(CopyFile(sourceFilePath, targetFilePath, mmapThreshold))
                     syslog(LOG_NOTICE, "Daemon failed to update file %s",
                         targetFilePath);
                 else
@@ -227,18 +248,26 @@ void Daemon_SynchronizeDirectories(char* sourceDirPath, char* targetDirPath)
     /// Sweepback:
     while ((currentEntry = readdir(targetDir)) != NULL )
     {
-        // If readdir() entry is a DIRectory.
+        /// If readdir() entry is a DIRectory.
         if (flag_recursion
             && currentEntry->d_type == DT_DIR
             && strcmp(currentEntry->d_name, ".") != 0
             && strcmp(currentEntry->d_name, "..") != 0 )
         {
-            char nestedSourceDirPath[1024], nestedTargetDirPath[1024];
-
-            snprintf(nestedSourceDirPath, 1024,"%s/%s",
+            int nestedSourceDirPath_stringLenght_ =
+                strlen(sourceDirPath) + strlen(currentEntry->d_name) + 2;
+            char nestedSourceDirPath[nestedSourceDirPath_stringLenght_];
+            snprintf(nestedSourceDirPath, nestedSourceDirPath_stringLenght_,
+                "%s/%s",
                 sourceDirPath, currentEntry->d_name);
-            snprintf(nestedTargetDirPath, 1024,"%s/%s",
+
+            int nestedTargetDirPath_stringLenght_ =
+                strlen(targetDirPath) + strlen(currentEntry->d_name) + 2;
+            char nestedTargetDirPath[nestedTargetDirPath_stringLenght_];
+            snprintf(nestedTargetDirPath, nestedTargetDirPath_stringLenght_,
+                "%s/%s",
                 targetDirPath, currentEntry->d_name);
+
 
             if (!DoesDirectoryExistsAt(nestedSourceDirPath))
             {
@@ -248,14 +277,21 @@ void Daemon_SynchronizeDirectories(char* sourceDirPath, char* targetDirPath)
             }
         }
 
-        // If readdir() entry is a REGular file.
+        /// If readdir() entry is a REGular file.
         if (currentEntry->d_type == DT_REG)
         {
-            char sourceFilePath[1024], targetFilePath[1024];
-
-            snprintf(sourceFilePath, 1024,"%s/%s",
+            int sourceFilePath_stringLenght_ =
+                strlen(sourceDirPath) + strlen(currentEntry->d_name) + 2;
+            char sourceFilePath[sourceFilePath_stringLenght_];
+            snprintf(sourceFilePath, sourceFilePath_stringLenght_,
+                "%s/%s",
                 sourceDirPath, currentEntry->d_name);
-            snprintf(targetFilePath, 1024,"%s/%s",
+
+            int targetFilePath_stringLenght_ =
+                strlen(targetDirPath) + strlen(currentEntry->d_name) + 2;
+            char targetFilePath[targetFilePath_stringLenght_];
+            snprintf(targetFilePath, targetFilePath_stringLenght_,
+                "%s/%s",
                 targetDirPath, currentEntry->d_name);
 
             if (!DoesFileExistsAt(sourceFilePath))
@@ -265,16 +301,14 @@ void Daemon_SynchronizeDirectories(char* sourceDirPath, char* targetDirPath)
                     targetFilePath);
             }
         }
-
     }
-
     closedir(targetDir);
 }
 
 
 int main(int argc, char* argv[])
 {
-    if (argc < 2)
+    if (argc < 3)
     {
         printf("Error: Programm takes at least 2 arguments!\n");
         exit(EXIT_FAILURE);
@@ -284,10 +318,6 @@ int main(int argc, char* argv[])
     ParseOptionalArguments(argc, argv);
 
     ///FUNC: Handle parameters:
-    //TODO_CLEAN: Those comments:
-    // printf("argc: %d\n", argc);
-    // printf("strlen: %ld\n", strlen(argv[1]));
-    // printf("sizeof: %ld\n", sizeof(argv[1]));
     //STINK: I'm not sure about if this way of allocation is propper, may need
     //        to change to malloc().
     char sourceDirPath[strlen(argv[optind + 0]) + 1];
@@ -309,8 +339,6 @@ int main(int argc, char* argv[])
     }
 
 
-
-
     // Confirming daemon configuration.
     printf("Daemon configuration:\n");
     printf("  Source path: %s\n", sourceDirPath);
@@ -319,7 +347,8 @@ int main(int argc, char* argv[])
     printf("\n");
 
     // Start daemon.
-    InitializeDaemon(); // DEAMONIZED DOWN FROM HERE ---------------------------
+    InitializeDaemon();
+    // DEAMONIZED DOWN FROM HERE -----------------------------------------------
 
     // Setting mask for newly created files.
     umask(0);
@@ -332,17 +361,15 @@ int main(int argc, char* argv[])
     while (iterationsLifespan)
     {
         // Daemon runs first, then falls asleep.
-        //TODO: Insert daemon code here:
         Daemon_SynchronizeDirectories(sourceDirPath, targetDirPath);
-        //TODO_CLEAN: Delete below line.
-        SimpleLog("Daemon iteration uwu");
 
         sleep(sleepTimeInSeconds);
+
         if(flag_sigusr1 == 0)
             SimpleLog("Natural awakening of daemon!");
-        // To make daemon stop after some time.
+
+        //TODO_CLEAN: To make daemon stop after some time.
         iterationsLifespan--;
-        // break;
     }
 
     SimpleLog("Daemon terminated qwq");
