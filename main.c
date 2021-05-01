@@ -12,6 +12,7 @@
 #include <utime.h> // for updating time
 // #include <ctype.h>
 #include "UtilityFunctions.h"
+#include "Copy.h"
 
 // Tags description:
 //TODO - thing to do.
@@ -38,10 +39,53 @@ char flag_sigusr1 = 0;
 #pragma endregion
 
 
+void ParseOptionalArguments()
+{
+    int c;
+    while ((c = getopt(argc, argv, "Rt:T:")) != -1)
+    {
+        switch(c)
+        {
+            case 't': // (t)ime - optarg
+                sleepTimeInSeconds = atoi(optarg);
+                if(sleepTimeInSeconds <= 0)
+                {
+                    printf("Impropper sleep time provided (%d s) overrided to default (300s)"
+                    ,sleepTimeInSeconds);
+                    sleepTimeInSeconds = 300;
+                }
+                break;
+            case 'R': // (R)ecursion
+                //TODO: Implement.
+                flag_recursion = 1;
+                break;
+            case 'T': // (T)hreshold - optarg
+                //TODO: Implement.
+                mmapThreshold = atoi(optarg);
+                if(mmapThreshold <= 0)
+                {
+                    printf("Impropper mmapThreshold provided (%d b) overrided to default (65536b)"
+                    ,mmapThreshold);
+                    mmapThreshold = 65536;
+                }
+                break;
+        }
+    }
+}
 
-#pragma region >>> Initialization Functions <<<
+void Daemon_SignalHandler(int signalCode)
+{
+    switch (signalCode)
+    {
+    case SIGUSR1:
+        //TODO: insert propper signal handling.
+        syslog(LOG_NOTICE, "Daemon awakens due to SIGUSR1 stimulant ~w~");
+        break;
 
-void Daemon_SignalHandler(int signalCode);
+    default:
+        break;
+    }
+}
 
 void InitializeDaemon()
 {
@@ -90,67 +134,6 @@ void InitializeDaemon()
 
     /// Opens log file (first parameter is daemon's name)
     openlog (DAEMON_NAME, LOG_PID, LOG_DAEMON);
-}
-
-#pragma endregion
-
-
-void Daemon_SignalHandler(int signalCode)
-{
-    switch (signalCode)
-    {
-    case SIGUSR1:
-        //TODO: insert propper signal handling.
-        syslog(LOG_NOTICE, "Daemon awakens due to SIGUSR1 stimulant ~w~");
-        break;
-
-    default:
-        break;
-    }
-}
-
-#define COPYING_BUFFER_SIZE 65536
-int CopyFile(char* fileName_source, char* fileName_target)
-{
-    // syslog(LOG_NOTICE, "Copying %s to %s...", fileName_source, fileName_target);
-    int in = open(fileName_source, O_RDONLY);
-    int out = open(fileName_target, O_WRONLY | O_CREAT);
-
-    // Error handling (bit primitive, but!):
-    if ( in == -1 )
-    {
-        // syslog(LOG_NOTICE, "Source file \"%s\" not found!", fileName_source);
-        close(in);
-        close(out);
-        return 1;
-    }
-    if ( out == -1 )
-    {
-        // syslog(LOG_NOTICE, "Failed to target file \"%s\"", fileName_target);
-        close(in);
-        close(out);
-        return 2;
-    }
-
-    // Copying file:
-
-    unsigned char* buffer =
-        (unsigned char*) malloc(sizeof(unsigned char) * COPYING_BUFFER_SIZE);
-
-    while ( read(in, buffer, COPYING_BUFFER_SIZE) )
-        write(out, buffer, COPYING_BUFFER_SIZE);
-
-    close(in);
-    close(out);
-
-    free(buffer);
-
-    // Setting privilages and modification time:
-    EqualizePrivilages(fileName_source, fileName_target);
-    EqualizeModificationTime(fileName_source, fileName_target);
-
-    // syslog(LOG_NOTICE, "Successfully copied file.");
-    return 0;
 }
 
 void Daemon_SynchronizeDirectories(char* sourceDirPath, char* targetDirPath)
@@ -289,7 +272,6 @@ void Daemon_SynchronizeDirectories(char* sourceDirPath, char* targetDirPath)
 }
 
 
-
 int main(int argc, char* argv[])
 {
     if (argc < 2)
@@ -298,38 +280,8 @@ int main(int argc, char* argv[])
         exit(EXIT_FAILURE);
     }
 
-    ///FUNC: Handle optional arguments:
-    int c;
-    while ((c = getopt(argc, argv, "Rt:T:")) != -1)
-    {
-        switch(c)
-        {
-            case 't': // (t)ime - optarg
-                sleepTimeInSeconds = atoi(optarg);
-                if(sleepTimeInSeconds <= 0)
-                {
-                    printf("Impropper sleep time provided (%d s) overrided to default (300s)"
-                    ,sleepTimeInSeconds);
-                    sleepTimeInSeconds = 300;
-                }
-                break;
-            case 'R': // (R)ecursion
-                //TODO: Implement.
-                flag_recursion = 1;
-                break;
-            case 'T': // (T)hreshold - optarg
-                //TODO: Implement.
-                mmapThreshold = atoi(optarg);
-                if(mmapThreshold <= 0)
-                {
-                    printf("Impropper mmapThreshold provided (%d b) overrided to default (65536b)"
-                    ,mmapThreshold);
-                    mmapThreshold = 65536;
-                }
-                break;
-
-        }
-    }
+    // Handle optional arguments.
+    ParseOptionalArguments();
 
     ///FUNC: Handle parameters:
     //TODO_CLEAN: Those comments:
