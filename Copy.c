@@ -6,6 +6,10 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+#include <string.h>
+#include <stdio.h>
+#include <sys/mman.h>
+
 #include "UtilityFunctions.h"
 
 static int CopyUsingReadWrite(char* fileName_source, char* fileName_target, long int bufferSize);
