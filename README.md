@@ -14,7 +14,8 @@ real-life scenario, I can't take responsibility for if it explodes or something 
 - t - (t)ime of sleep [int],
 - T - (T)hreshold above which mmap() will be used for copying files instead of read() [int].
 <br>
-(I'm not providing below text in any other language than polish...)<br>
+(I'm not providing below text in any other language than polish...)
+
 ## [Temat 2 - Demon synchronizujący dwa podkatalogi:](https://cez2.wi.pb.edu.pl/moodle/mod/page/view.php?id=5248)
 <pre>
 Podstawowe <12pkt>:
